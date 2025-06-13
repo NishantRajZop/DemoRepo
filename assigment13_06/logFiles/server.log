@@ -1,0 +1,25 @@
+[INFO] Server started
+[INFO] Listening on port 8080
+[INFO] Client connected
+[WARNING] High memory usage
+[INFO] Request received
+[ERROR] Failed to connect to DB
+[INFO] Cache initialized
+[WARNING] Disk space low
+[INFO] Scheduled job started
+[ERROR] Timeout occurred
+[INFO] Client disconnected
+[INFO] Request processed
+[ERROR] Invalid user input
+[INFO] Backup completed
+[WARNING] Deprecated API used
+[INFO] Shutting down
+[ERROR] Unhandled exception
+[INFO] Restarting service
+[WARNING] Configuration not optimal
+[INFO] Auth success
+[ERROR] DB connection lost
+[INFO] File uploaded
+[ERROR] Permission denied
+[WARNING] API latency high
+[INFO] Cleanup complete
