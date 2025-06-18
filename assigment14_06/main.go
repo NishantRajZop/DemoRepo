@@ -10,8 +10,8 @@ type task struct {
 }
 
 /*
-   this generateID returns You a Counter which will initialize Your getNextID() to 0
-   and then after on every getNextID()  call it will increment the id and return you a new ID
+this generateID returns You a Counter which will initialize Your getNextID() to 0
+and then after on every getNextID()  call it will increment the id and return you a new ID
 */
 func generateID() func() int {
 	id := 0
@@ -22,8 +22,8 @@ func generateID() func() int {
 	return returningFunction
 }
 
-//addTask appends the current task to the tasks slice and returns the new slice
-//addTask takes Two Params.  CurrTask and TaskList , append the CurrTask and Returns the Updated Task
+// addTask appends the current task to the tasks slice and returns the new slice
+// addTask takes Two Params.  CurrTask and TaskList , append the CurrTask and Returns the Updated Task
 func addTask(currTask task, tasks []task) []task {
 	fmt.Printf("Adding task: %d - %s\n", currTask.id, currTask.taskName)
 	return append(tasks, currTask)
