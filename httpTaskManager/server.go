@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
+	"time"
 )
 
 type handler struct {
@@ -43,12 +43,14 @@ func (h *handler) ListAllTheTasks(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (h *handler) ReturnSpecificID(w http.ResponseWriter, r *http.Request) {
-	parts := strings.Split(r.URL.Path, "/")
-
-	fmt.Println(parts[2])
-
-	idStr := parts[2]
+	idStr := r.PathValue("id")
 	taskID, err := strconv.Atoi(idStr)
+
+	if taskID > len(h.tasks) || taskID == 0 {
+		http.Error(w, "Invalid task ID", http.StatusNotFound)
+
+		return
+	}
 
 	if err != nil {
 		http.Error(w, "Invalid task ID", http.StatusNotFound)
@@ -56,7 +58,7 @@ func (h *handler) ReturnSpecificID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	str := fmt.Sprintf("%+v", h.tasks[taskID])
+	str := fmt.Sprintf("%+v", h.tasks[taskID-1])
 
 	if _, err := w.Write([]byte(str)); err != nil {
 		log.Printf("Internal Server Error %v", err)
@@ -72,6 +74,8 @@ func (h *handler) CompleteThisTask(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 
 	taskID, err := strconv.Atoi(idStr)
+	fmt.Println(taskID)
+
 	if err != nil {
 		http.Error(w, "Invalid task ID", http.StatusNotFound)
 
@@ -93,7 +97,7 @@ func (h *handler) CompleteThisTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h *handler) AddThisTask(w http.ResponseWriter, r *http.Request) {
@@ -208,12 +212,19 @@ func main() {
 	h.tasks = addTask(currTask3, h.tasks)
 
 	http.HandleFunc("/", ServeHomePage)
-	http.HandleFunc("GET /tasks", h.ListAllTheTasks) // geta all tasks
-	http.HandleFunc("POST /tasks", h.AddThisTask)
+	http.HandleFunc("GET /tasks", h.ListAllTheTasks)       // geta all tasks
+	http.HandleFunc("POST /tasks", h.AddThisTask)          // add the Task getting in Req.body
 	http.HandleFunc("GET /tasks/{id}", h.ReturnSpecificID) // get id
 	http.HandleFunc("PUT /tasks/{id}", h.CompleteThisTask) // markComplete
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	srv := &http.Server{
+		Addr:         ":8080",
+		WriteTimeout: time.Second * 15,
+		ReadTimeout:  time.Second * 15,
+		IdleTimeout:  time.Second * 60,
+	}
+
+	if err := srv.ListenAndServe(); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
 }
